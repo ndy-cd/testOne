@@ -1,16 +1,19 @@
 const fs = require('fs');
 
+var doc = fs.readFileSync('./doc.txt');
 
 function _handler(req, res) {
     res.writeHead(200)
-    fs.readFile('newFolder' + req.url, (err, data) => {
+    fs.readFile('newFolder/template.html', (err, data) => {
         if(err) {
             res.writeHead(500);
             res.end(err);
             return;
         }
         res.writeHead(200);
-        res.end(data);
+        var result = String(data).replace('Insert Here', doc);
+
+        res.end(result);
         })    
 }
 
