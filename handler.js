@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+var qs = require('querystring');
 var doc = fs.readFileSync('./doc.txt');
 
 function _handler(req, res) {
@@ -14,17 +14,24 @@ function _handler(req, res) {
         var result = String(data).replace('Insert Here', doc);
         if (req.url != "/favicon.ico"){
             if (req.method == "POST"){
-                //console.log('Need to post!' + req.url);
-                fs.writeFileSync('./request.txt', doc);
+                var body = '';
+                req.on('data', (dat) => {
+                    body += dat;                    
+                });
+                req.on('end', () => {
+                    let out = qs.parse(body);
+                    fs.writeFile('./request.txt', out.text, (err) => {
+                        if (err) throw err;
+                        console.log('writeFile callback');
+                    });
+                });
                 res.end();
             }
             if (req.method == "GET"){
-                //console.log('Need to get!' + req.url);
                 res.end(result);
             }
         }
-        res.end();
-        })    
+        });    
 }
 
 module.exports = {
