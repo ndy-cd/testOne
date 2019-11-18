@@ -3,7 +3,7 @@ const fs = require('fs');
 
 function _handler(req, res) {
     res.writeHead(200)
-    fs.readFile('.' + req.url, (err, data) => {
+    fs.readFile('newFolder' + req.url, (err, data) => {
         if(err) {
             res.writeHead(500);
             res.end(err);
