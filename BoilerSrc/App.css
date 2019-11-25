@@ -1,0 +1,23 @@
+h1 {
+    color: blue;
+}
+
+.button {
+	border: 1px solid black;
+	border-radius: 5px;
+	width: 200px;
+	height: 50px;
+}
+
+.button.active{
+	background: blue;
+	color: white;
+}
+
+li {
+	display: inline;
+	list-style: none;
+	margin: 20px;
+	padding: 20px;
+	background: blue;
+}
