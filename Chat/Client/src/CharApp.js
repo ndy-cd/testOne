@@ -6,18 +6,20 @@ import '../styles/Chat.styl';
 class App extends React.Component{
     constructor(props) {
         super(props);
-        // subscribe((err, message) => this.setState({
-        //     message
-        // }));
+        this.state = {
+            message: 'no messages yet',
+            username: '',
+            logVisible: 'visible'
+        };
+
         this.onSubscribe = this.onSubscribe.bind(this);
+        this.handleUserName = this.handleUserName.bind(this);
+        this.handleUserNameInput = this.handleUserNameInput.bind(this);
     }
 
-    state = {
-        message: 'no messages yet',
-        logVisible: 'visible'
-    };
+    
 
-    onSubscribe(event){
+    onSubscribe(){
         let message;
         subscribe((msg) => {
             console.log('message recieved: ', msg);
@@ -26,20 +28,36 @@ class App extends React.Component{
         })
     };
 
+    handleUserNameInput(event){
+        this.setState({username: event.target.value});
+    }
+
+    handleUserName(event){
+        console.log('User name is ', this.state.username);
+        event.preventDefault();
+
+
+    }
+
     render() {
         return (
             <div>
-                <p>
-                    Message from server: {this.state.message}
-                </p>
-                <button onClick={this.onSubscribe}>Subscribe()</button>
+                <div className="sysInfo">
+                    <p>System Information</p>
+                    <p>Message from server: {this.state.message}</p>
+                    <button onClick={this.onSubscribe}>Subscribe()</button>
+                </div>
+                
                 <div className="log">
-                    <p style={{visibility: this.state.logVisible}}>
-                        Please, enter your name in the form below:</p>
-                    <form>
-                        <input type="text" placeholder="Your Name"></input>
-                        <input type="submit" value="Log on"></input>
-                    </form>
+                    <div className="log-input" style={{visibility: this.state.logVisible}}>
+                        <p>Please, enter your name in the form below:</p>
+                        <form onSubmit={this.handleUserName}>
+                            <input type="text" placeholder="Your Name" 
+                                onChange={this.handleUserNameInput}></input>
+                            <input type="submit" value="Log on"></input>
+                        </form>
+                    </div>
+                    
                 </div>
             </div>
         );
