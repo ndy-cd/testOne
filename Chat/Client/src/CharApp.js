@@ -1,23 +1,30 @@
 import React, { Component } from 'react';
 
-import { subscribe } from '../chat/api';
+import { subscribe, register, sendmessage, listenserver} from '../chat/api';
+import { MessageList } from './Message';
 import '../styles/Chat.styl';
 
 class App extends React.Component{
     constructor(props) {
         super(props);
+        listenserver((obj) => this.setState({msgobj: obj}))
         this.state = {
             message: 'no messages yet',
+            test: '',
+            newmessage: '',
             username: '',
-            logVisible: 'visible'
+            logVisible: '',
+            logShow: 'hidden',
+            object: {first: 1, second:2 },
+            msgobj: []
         };
 
         this.onSubscribe = this.onSubscribe.bind(this);
         this.handleUserName = this.handleUserName.bind(this);
         this.handleUserNameInput = this.handleUserNameInput.bind(this);
+        this.handleMessage = this.handleMessage.bind(this);
+        this.handleMessageInput = this.handleMessageInput.bind(this);
     }
-
-    
 
     onSubscribe(){
         let message;
@@ -35,8 +42,22 @@ class App extends React.Component{
     handleUserName(event){
         console.log('User name is ', this.state.username);
         event.preventDefault();
+        register(this.state.username, (msg) => {
+            console.log('message recieved: ', msg);
+        });
+        this.setState({logVisible: 'none'});
+        this.setState({logShow: 'visible'});
+    }
 
+    handleMessageInput(event){
+        this.setState({newmessage: event.target.value});
+    }
 
+    handleMessage(event){
+        event.preventDefault();
+        console.log('Sending message: ' + this.state.newmessage);
+        sendmessage({name: this.state.username, message: this.state.newmessage});
+        this.setState({newmessage: ''});
     }
 
     render() {
@@ -49,7 +70,7 @@ class App extends React.Component{
                 </div>
                 
                 <div className="log">
-                    <div className="log-input" style={{visibility: this.state.logVisible}}>
+                    <div className="log-input" style={{display: this.state.logVisible}}>
                         <p>Please, enter your name in the form below:</p>
                         <form onSubmit={this.handleUserName}>
                             <input type="text" placeholder="Your Name" 
@@ -57,6 +78,25 @@ class App extends React.Component{
                             <input type="submit" value="Log on"></input>
                         </form>
                     </div>
+                    <div className="log-show" style={{visibility: this.state.logShow}}>
+                        <div>You logged as {this.state.username}</div>
+                    </div>                    
+                </div>
+
+                <div className="chat">
+                    <div className="chat-messages">
+                        <MessageList allmsg={this.state.msgobj}/>
+                    </div>
+                    <div className="chat-filed">
+                        <form className="chat-field" onSubmit={this.handleMessage}>
+                            <input type="text" name="message-field" 
+                                    onChange={this.handleMessageInput}
+                                    value={this.state.newmessage}></input>
+                            <input type="submit" value="Send" className="send"
+                                    onSubmit={this.state.handleMessage}></input>
+                        </form>
+                    </div>
+                    
                     
                 </div>
             </div>
