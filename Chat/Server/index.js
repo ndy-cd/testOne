@@ -8,12 +8,21 @@ var users = [];
 var messages = [];
 // var msgobj = {[name, message]};
 
+// heroku >>
+var port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/index_client.html');
+});
+app.get('/index_bundle.js', function(req, res){
+    res.sendFile(__dirname + '/index_bundle.js');
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(port, function(){             // << heroku
+  console.log('listening on *: ', port); 
 });
 
 io.on('connection', function(socket){
