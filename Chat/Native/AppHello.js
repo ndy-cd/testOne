@@ -5,26 +5,19 @@ import {StyleSheet, Button, Text,
 window.navigator.userAgent = "react-native";
 import io from 'socket.io-client';
 
-const DATA = [
-  {
-    "id": 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    "title": "First Item",
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
+console.ignoredYellowBox = ['Remote debugger'];
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['Remote debugger']);
+YellowBox.ignoreWarnings([
+    'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
+]);
 
-function Item({ title }) {
-    console.log('render Item, message:' + title );
+function Item({ msg }) {
+    console.log('render Item, message:' + msg.message );
   return (
-    <View>
-      <Text>{title}</Text>
+    <View style={styles.msgItem}>
+      <Text style={styles.msgItemName} >{msg.name}</Text>
+      <Text style={styles.msgItemText}>{msg.message}</Text>
     </View>
   );
 }
@@ -37,11 +30,12 @@ class HelloWorldApp extends Component {
             newmessage: '',
             showlog: styles.login,
             showname: styles.loginNone,
-            msgobj: [{id: 0, username: '', message: ''}],
+            msgobj: [],
         };
         this.handleUserName = this.handleUserName.bind(this);
         this.handleMessage = this.handleMessage.bind(this);
-        this.socket = io('http://192.168.0.5:3000', {jsonp: false});
+        // this.socket = io('http://192.168.0.5:3000', {jsonp: false});
+        this.socket = io('https://obscure-river-56862.herokuapp.com/', {jsonp: false});
         this.socket.on('bcast', (obj) => {
             this.setState({msgobj: obj})
             console.log(obj);
@@ -85,11 +79,9 @@ class HelloWorldApp extends Component {
             <Text style={this.state.showname}>You are logged as:     {this.state.username}</Text>
             <View style={styles.chat}>
                 <FlatList style={styles.msgList}
-                    // data={DATA}
-                    // renderItem={({ item }) => <Item title={item.title} />}
                     data={this.state.msgobj}
-                    renderItem={({ item }) => <Item title={item.message} />}
-                    keyExtractor={item => item.id}                  
+                    renderItem={({ item }) => <Item msg={item} />}
+                    keyExtractor={item => item.id}
                 />
                 <View style={styles.msgField}>
                     <TextInput
@@ -134,14 +126,31 @@ const styles = StyleSheet.create({
     },
     chat: {
         flex: 1,
-        // backgroundColor: 'blue',
         borderColor: 'orange',
-        borderWidth: 10,
+        // borderWidth: 10,
         alignItems: 'stretch',
     },
     msgList: {
         // backgroundColor: 'red',
-    },  
+    },
+    msgItem: {
+        backgroundColor: '#80bfff',
+        margin: 10,
+        marginTop: 0,
+        borderRadius: 10,
+    },
+    msgItemName: {
+        color: '#4d4d4d',
+        paddingLeft: 10,
+        fontSize: 18,  
+    },
+    msgItemText: {
+        color: '#f2f2f2',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        marginBottom: 10,
+    },
     msgField: {
         flexDirection: 'row',
         justifyContent: 'center',

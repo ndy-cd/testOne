@@ -62,7 +62,7 @@ class App extends React.Component{
 
     render() {
         return (
-            <div>
+            <div className="container">
                 <div className="sysInfo">
                     <p>System Information</p>
                     <p>Message from server: {this.state.message}</p>

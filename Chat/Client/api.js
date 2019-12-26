@@ -1,5 +1,6 @@
 import openSocket from 'socket.io-client';
-const socket = openSocket('http://localhost:3000');
+// const socket = openSocket('http://localhost:3000');
+const socket = openSocket('https://obscure-river-56862.herokuapp.com/');
 
 function listenserver (cb) {
     console.log("ListenToServer()");
